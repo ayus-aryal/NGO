@@ -1,4 +1,4 @@
-package com.example.ngoregistration
+package com.example.ngo.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
