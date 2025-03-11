@@ -1,11 +1,13 @@
 package com.example.ngo.screens
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -20,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ngo.ui.theme.NGOTheme
+import androidx.activity.compose.rememberLauncherForActivityResult
+
 
 class RegisterEvent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +43,16 @@ fun RegisterEventScreen(navController: NavController?) {
     val eventDescription = remember { mutableStateOf("") }
     val eventCategories = listOf("Health", "Education", "Environment", "Social")
     var selectedCategory by remember { mutableStateOf(eventCategories[0]) }
-    val eventLocation = remember { mutableStateOf("Tap to pick location") }
+    var eventLocation by remember { mutableStateOf("Tap to pick location") }
+
+    val locationPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val selectedUri: Uri? = result.data?.data
+            eventLocation = selectedUri?.toString() ?: "Location Selected"
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -47,13 +60,8 @@ fun RegisterEventScreen(navController: NavController?) {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            "Register Event",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Text("Register Event", fontSize = 22.sp, fontWeight = FontWeight.Bold)
 
-        // Event Name
         OutlinedTextField(
             value = eventName.value,
             onValueChange = { eventName.value = it },
@@ -61,7 +69,6 @@ fun RegisterEventScreen(navController: NavController?) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Event Description
         OutlinedTextField(
             value = eventDescription.value,
             onValueChange = { eventDescription.value = it },
@@ -96,27 +103,22 @@ fun RegisterEventScreen(navController: NavController?) {
             }
         }
 
-        // Select Location Button (Opens Google Maps)
+        // Select Location Button (Opens Google Maps Picker)
         Button(
             onClick = {
-                try {
-                    val gmmIntentUri = Uri.parse("geo:0,0?q=") // Opens Google Maps
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
-                    context.startActivity(mapIntent)
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Google Maps not found!", Toast.LENGTH_SHORT).show()
-                }
+                val gmmIntentUri = Uri.parse("geo:0,0?q=")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                locationPickerLauncher.launch(mapIntent)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(eventLocation.value)
+            Text(eventLocation)
         }
 
-        // Submit Event Button
+        // Submit Button
         Button(
             onClick = {
-                // Handle form submission (You can replace this with your actual logic)
                 Toast.makeText(
                     context,
                     "Event Registered: ${eventName.value}",
