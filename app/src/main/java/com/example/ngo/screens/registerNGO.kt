@@ -41,65 +41,59 @@ fun RegisterNGOScreen(navController: NavController?) {
     val missionStatement = remember { mutableStateOf("") }
     val registrationNumber = remember { mutableStateOf("") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        // Header Row
-        Row(
+        Card(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Register your NGO",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "Register your NGO",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()  // Ensures text is centered properly
+                InputField(label = "NGO Name", placeholder = "Enter NGO name", value = name)
+                Spacer(modifier = Modifier.height(10.dp))
+                InputField(label = "Headquarters", placeholder = "Enter address", value = address, singleLine = false)
+                Spacer(modifier = Modifier.height(10.dp))
+                InputField(label = "Contact", placeholder = "Phone number", value = phone, keyboardType = KeyboardType.Phone)
+                Spacer(modifier = Modifier.height(10.dp))
+                InputField(label = "Mission Statement", placeholder = "Describe your mission", value = missionStatement, singleLine = false)
+                Spacer(modifier = Modifier.height(10.dp))
+                InputField(label = "Registration Number", placeholder = "Enter registration number", value = registrationNumber)
 
-            )
+                Spacer(modifier = Modifier.height(24.dp))
 
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Input Fields
-        InputField(label = "NGO", placeholder = "Name", value = name)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InputField(label = "Headquarters", placeholder = "Address", value = address, singleLine = false)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InputField(label = "Contact", placeholder = "Phone number", value = phone, keyboardType = KeyboardType.Phone)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InputField(label = "About", placeholder = "Mission Statement", value = missionStatement, singleLine = false)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InputField(label = "Registration Number", placeholder = "Business registration number", value = registrationNumber)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Next Button
-        Button(
-            onClick = { /* Handle Next Button Click */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(text = "Next", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Button(
+                    onClick = {
+                    /* Handle Next Button Click */
+                    navController?.navigate("register_event"){
+                        popUpTo("register_ngo") {inclusive = true}
+                    }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(text = "Next", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            }
         }
     }
 }
@@ -116,7 +110,7 @@ fun InputField(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(bottom = 6.dp)
         )
         OutlinedTextField(
@@ -130,7 +124,6 @@ fun InputField(
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

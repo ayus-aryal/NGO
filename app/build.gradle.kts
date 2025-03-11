@@ -70,5 +70,8 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.androidx.navigation.compose)
 
+    implementation(libs.play.services.maps)
+    implementation(libs.places)
+
 
 }

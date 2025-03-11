@@ -5,12 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.ngo.screens.RegisterEventScreen
 import com.example.ngo.screens.RegisterNGOScreen
-import com.example.ngo.ui.theme.NGOTheme
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -18,16 +18,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NGOTheme {
-                val navController = rememberNavController()
-                Scaffold(modifier = Modifier.fillMaxSize()) {
-                    RegisterNGOScreen(navController)  // Removed modifier argument
-                }
-            }
+            ngoNavigation()
+        }
+    }
+}
+
+@Composable
+fun ngoNavigation(){
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "register_ngo"){
+        composable(route = "register_ngo"){
+            RegisterNGOScreen(navController)
         }
 
-
+        composable(route = "register_event"){
+            RegisterEventScreen(navController)
+        }
     }
+
 }
 
 
