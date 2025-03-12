@@ -24,7 +24,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ngo.ui.theme.NGOTheme
 import androidx.activity.compose.rememberLauncherForActivityResult
 
-
 class RegisterEvent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
