@@ -72,6 +72,8 @@ dependencies {
 
     implementation(libs.play.services.maps)
     implementation(libs.places)
+    implementation("com.google.firebase:firebase-firestore-ktx:24.10.3")
+
 
 
 }

@@ -1,21 +1,21 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.2"
 firebaseBom = "33.10.0"
-kotlin = "2.0.0"
+kotlin = "2.1.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-composeBom = "2024.04.01"
+composeBom = "2025.02.00"
 material3 = "1.3.1"
-navigationCompose = "2.8.8"
+navigationCompose = "2.8.9"
 places = "4.1.0"
 playServicesMaps = "19.1.0"
 ui = "1.7.8"
 uiToolingPreview = "1.7.8"
-foundationLayoutAndroid = "1.7.2"
+foundationLayoutAndroid = "1.7.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,4 +46,5 @@ androidx-foundation-layout-android = { group = "androidx.compose.foundation", na
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
 

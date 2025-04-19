@@ -22,10 +22,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ngo.ui.theme.NGOTheme
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import android.util.Log
+import com.google.firebase.FirebaseApp
+
 
 class RegisterNGO : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             val navController = rememberNavController()
             RegisterNGOScreen(navController)
@@ -83,9 +89,30 @@ fun RegisterNGOScreen(navController: NavController?) {
                 Button(
                     onClick = {
                     /* Handle Next Button Click */
-                    navController?.navigate("register_event"){
-                        popUpTo("register_ngo") {inclusive = true}
-                    }
+                                val db = Firebase.firestore
+
+                                val ngoData = hashMapOf(
+                                    "name" to name.value,
+                                    "address" to address.value,
+                                    "phone" to phone.value,
+                                    "missionStatement" to missionStatement.value,
+                                    "registrationNumber" to registrationNumber.value
+                                )
+
+                                db.collection("ngos")
+                                    .add(ngoData)
+                                    .addOnSuccessListener {
+                                        // Navigate only after successfully adding data
+                                        navController?.navigate("register_event") {
+                                            popUpTo("register_ngo") {
+                                                inclusive = true
+                                            }
+                                        }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.e("FirestoreError", "Failed to register NGO", e)
+                                    }
+
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
