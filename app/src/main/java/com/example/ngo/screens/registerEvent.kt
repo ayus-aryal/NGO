@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.ngo.ui.theme.NGOTheme
 import androidx.activity.compose.rememberLauncherForActivityResult
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterEvent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +53,9 @@ fun RegisterEventScreen(navController: NavController?) {
             eventLocation = selectedUri?.toString() ?: "Location Selected"
         }
     }
+
+    // Get Firestore instance
+    val db = FirebaseFirestore.getInstance()
 
     Column(
         modifier = Modifier
@@ -118,11 +122,36 @@ fun RegisterEventScreen(navController: NavController?) {
         // Submit Button
         Button(
             onClick = {
-                Toast.makeText(
-                    context,
-                    "Event Registered: ${eventName.value}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (eventName.value.isNotEmpty() && eventDescription.value.isNotEmpty()) {
+                    // Create a map of event data
+                    val eventData = hashMapOf(
+                        "eventName" to eventName.value,
+                        "eventDescription" to eventDescription.value,
+                        "eventCategory" to selectedCategory,
+                        "eventLocation" to eventLocation
+                    )
+
+                    // Save the data to Firestore
+                    db.collection("events")
+                        .add(eventData)
+                        .addOnSuccessListener {
+                            Toast.makeText(
+                                context,
+                                "Event Registered Successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController?.navigate("events_screen") // Navigate to events list (or any other screen)
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(
+                                context,
+                                "Error registering event: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                } else {
+                    Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {

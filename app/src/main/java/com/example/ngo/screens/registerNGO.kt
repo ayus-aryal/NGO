@@ -99,7 +99,9 @@ fun RegisterNGOScreen(navController: NavController?) {
                                     "registrationNumber" to registrationNumber.value
                                 )
 
-                                db.collection("ngos")
+                        Log.d("NGO_DEBUG", "Attempting to add NGO: $ngoData")
+
+                        db.collection("ngos")
                                     .add(ngoData)
                                     .addOnSuccessListener {
                                         // Navigate only after successfully adding data
