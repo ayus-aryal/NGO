@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ngo.ui.theme.NGOTheme
 import androidx.activity.compose.rememberLauncherForActivityResult
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.core.net.toUri
 
 class RegisterEvent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +42,9 @@ fun RegisterEventScreen(navController: NavController?) {
     val context = LocalContext.current
     val eventName = remember { mutableStateOf("") }
     val eventDescription = remember { mutableStateOf("") }
-    val eventCategories = listOf("Health", "Education", "Environment", "Social")
+    val eventCategories = listOf("Health", "Education", "Environment")
     var selectedCategory by remember { mutableStateOf(eventCategories[0]) }
+    var expanded by remember { mutableStateOf(false) }
     var eventLocation by remember { mutableStateOf("Tap to pick location") }
 
     val locationPickerLauncher = rememberLauncherForActivityResult(
@@ -54,7 +56,7 @@ fun RegisterEventScreen(navController: NavController?) {
         }
     }
 
-    // Get Firestore instance
+    // Firestore instance
     val db = FirebaseFirestore.getInstance()
 
     Column(
@@ -83,24 +85,33 @@ fun RegisterEventScreen(navController: NavController?) {
 
         // Event Category Dropdown
         ExposedDropdownMenuBox(
-            expanded = false,
-            onExpandedChange = {}
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
                 value = selectedCategory,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Event Category") },
-                modifier = Modifier.fillMaxWidth()
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
             )
+
             ExposedDropdownMenu(
-                expanded = false,
-                onDismissRequest = {}
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
             ) {
                 eventCategories.forEach { category ->
                     DropdownMenuItem(
                         text = { Text(category) },
-                        onClick = { selectedCategory = category }
+                        onClick = {
+                            selectedCategory = category
+                            expanded = false
+                        }
                     )
                 }
             }
@@ -109,7 +120,7 @@ fun RegisterEventScreen(navController: NavController?) {
         // Select Location Button (Opens Google Maps Picker)
         Button(
             onClick = {
-                val gmmIntentUri = Uri.parse("geo:0,0?q=")
+                val gmmIntentUri = "geo:0,0?q=".toUri()
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                 mapIntent.setPackage("com.google.android.apps.maps")
                 locationPickerLauncher.launch(mapIntent)
@@ -123,7 +134,6 @@ fun RegisterEventScreen(navController: NavController?) {
         Button(
             onClick = {
                 if (eventName.value.isNotEmpty() && eventDescription.value.isNotEmpty()) {
-                    // Create a map of event data
                     val eventData = hashMapOf(
                         "eventName" to eventName.value,
                         "eventDescription" to eventDescription.value,
@@ -131,7 +141,6 @@ fun RegisterEventScreen(navController: NavController?) {
                         "eventLocation" to eventLocation
                     )
 
-                    // Save the data to Firestore
                     db.collection("events")
                         .add(eventData)
                         .addOnSuccessListener {
@@ -140,7 +149,7 @@ fun RegisterEventScreen(navController: NavController?) {
                                 "Event Registered Successfully!",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            navController?.navigate("events_screen") // Navigate to events list (or any other screen)
+                            navController?.navigate("events_screen")
                         }
                         .addOnFailureListener { e ->
                             Toast.makeText(
